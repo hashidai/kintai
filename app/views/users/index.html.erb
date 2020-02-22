@@ -15,7 +15,11 @@
         <th></th>
       </tr>
     </thead>
-
+    <p>ユーザー検索</p>
+      <%= form_tag(users_path,:method => 'get') do %>
+        <%= text_field_tag :search %>
+        <%= submit_tag '検索', :name => nil %>
+      <% end %>
     <% @users.each do |user| %>
       <tr>
         <td>

@@ -6,7 +6,8 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
 
   def index
-    @users = User.paginate(page: params[:page])
+    @users = User.paginate(page: params[:page]).search(params[:search
+    ])
   end
 
   def show
@@ -58,13 +59,19 @@ class UsersController < ApplicationController
     redirect_to users_url
   end
 
-  private
+  def will_paginate
+  end
 
-    def user_params
+
+  def user_params
       params.require(:user).permit(:name, :email, :department, :password, :password_confirmation)
-    end
+  end
 
-    def basic_info_params
+  def basic_info_params
       params.require(:user).permit(:department, :basic_time, :work_time)
-    end
+  end
+  
+  def search
+    @users = User.search(params[:search])
+  end
 end

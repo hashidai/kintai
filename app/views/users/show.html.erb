@@ -11,7 +11,7 @@
       <td>基本時間：<%= format_basic_info(@user.basic_time) %></td>
       <td>月初日: <%= l(@first_day, format: :short) %></td>
     </tr>
-
+    
     <tr>
       <td>所属：<%= @user.department.present? ? @user.department : "未所属" %></td>
       <td>名前：<%= @user.name %></td>
@@ -46,24 +46,49 @@
         <td>備考</td>
       </tr>
     </thead>
-    
+
     <tbody>
      <% @attendances.each do |day| %>
+     
       <tr>
         <td><%= l(day.worked_on, format: :short) %></td>
-        <td><%= $days_of_the_week[day.worked_on.wday] %></td>
-        <td><%= l(day.started_at, format: :hour) if day.started_at.present? %></td>
-        <td><%= l(day.started_at, format: :min) if day.started_at.present? %></td>
+        <% if day.worked_on.saturday? %>
+          <td class=" sat ">
+            <%= $days_of_the_week[day.worked_on.wday] %>
+          </td>
+        <% end %>
+        <% if day.worked_on.sunday? %>
+          <td class=" sun ">
+            <%= $days_of_the_week[day.worked_on.wday] %>
+          </td>
+        <% end %>
+        <% if day.worked_on.monday? %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <% end %>
+        <% if day.worked_on.tuesday? %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <% end %>
+        <% if day.worked_on.wednesday? %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <% end %>
+        <% if day.worked_on.thursday? %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <% end %>
+        <% if day.worked_on.friday? %>
+          <td><%= $days_of_the_week[day.worked_on.wday] %></td>
+        <% end %>
+        <td><%= format_hour(day.started_at) if day.started_at.present? %></td>
+        <td><%= format_min(day.started_at) if day.started_at.present? %></td>
         <td>
           <% if btn_text = attendance_state(day) %>
             <%= link_to "#{btn_text}", user_attendance_path(@user, day), method: :patch, class: "btn btn-primary btn-attendance" %>
           <% end %>
         </td>
-        <td><%= l(day.finished_at, format: :hour) if day.finished_at.present? %></td>
-        <td><%= l(day.finished_at, format: :min) if day.finished_at.present? %></td>
+        <td><%= format_hour(day.finished_at) if day.finished_at.present? %></td>
+        <td><%= format_min(day.finished_at) if day.finished_at.present? %></td>
         <td>
           <% if day.started_at.present? && day.finished_at.present? %>
-            <%= str_times = working_times(day.started_at, day.finished_at) %>
+            <%= str_times = working_times(day.started_at.floor_to(15.minutes),day.finished_at.floor_to(15.minutes)) %>
             <% @total_working_times = @total_working_times.to_f + str_times.to_f %>
           <% end %>
         </td>
@@ -84,8 +109,7 @@
         <td colspan="2"><%= @attendances.count %></td>
         <td colspan="3"><%= format_basic_info(@user.work_time).to_f * @worked_sum %></td>
         <td colspan="2"><%= format("%.2f", @total_working_times.to_f) %></td>
-        <td colspan="2" ></td>
-        <td></td>
+        <td colspan="2"></td>
       </tr>
     </tfoot>    
   </table>

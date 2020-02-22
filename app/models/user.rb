@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+  
+  scope :get_by_name, -> (name){
+    where("name like?", "%#{name}%")
+  }
   has_many :attendances, dependent: :destroy
   # 「remember_token」という仮想の属性を作成します。
   attr_accessor :remember_token
@@ -48,5 +52,13 @@ class User < ApplicationRecord
   # ユーザーのログイン情報を破棄します。
   def forget
     update_attribute(:remember_digest, nil)
+  end
+  
+  def self.search(search)
+      if search
+        where(['name LIKE ?', "%#{search}%"])
+      else
+        all
+      end
   end
 end
