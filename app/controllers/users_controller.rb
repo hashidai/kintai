@@ -2,8 +2,10 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
   before_action :correct_user, only: [:edit, :update]
-  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info, :index]
   before_action :set_one_month, only: :show
+  before_action :admin_or_correct_user, only: :show
+
 
   def index
     @users = User.paginate(page: params[:page]).search(params[:search
@@ -61,6 +63,15 @@ class UsersController < ApplicationController
 
   def will_paginate
   end
+  
+  private
+  
+  def correct_user
+    user = User.find(params[:id])
+    if current_user != user
+      redirect_to root_path
+    end
+  end
 
 
   def user_params
@@ -73,5 +84,13 @@ class UsersController < ApplicationController
   
   def search
     @users = User.search(params[:search])
+  end
+  
+  def admin_or_correct_user
+      @user = User.find(params[:user_id]) if @user.blank?
+      unless current_user?(@user) || current_user.admin?
+        flash[:danger] = "編集権限がありません。"
+        redirect_to(root_url)
+      end  
   end
 end
