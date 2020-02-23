@@ -6,7 +6,6 @@ gem 'bcrypt'
 gem 'faker'
 gem 'bootstrap-sass'
 gem 'will_paginate'
-gem 'rounding'
 gem 'bootstrap-will_paginate'
 gem 'puma',         '~> 3.7'
 gem 'sass-rails',   '~> 5.0'
@@ -15,7 +14,6 @@ gem 'coffee-rails', '~> 4.2'
 gem 'jquery-rails'
 gem 'turbolinks',   '~> 5'
 gem 'jbuilder',     '~> 2.5'
-
 
 group :development, :test do
   gem 'sqlite3', '1.3.13'
